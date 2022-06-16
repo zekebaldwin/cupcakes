@@ -31,19 +31,24 @@ def create():
     db.session.commit()
     return (jsonify(cupcake=cupcake.to_dict()), 201)
 
-@app.route("/api/cupcakes/<int:id>")
+@app.route("/api/cupcake/<int:id>")
 def cupcake_info(id):
     specific_cake = Cupcake.query.get_or_404(id)
     return jsonify(cupcake=specific_cake.to_dict())
 
-@app.route("/api/cupcakes/<int:id>", methods=["PATCH"])
+@app.route("/api/cupcake/<int:id>", methods=["PATCH"])
 def update(id):
     specific_cake = Cupcake.query.get_or_404(id)
-    db.session.query(specific_cake).filter_by(id=id).update(request.json)
+    specific_cake.flavor=request.json["flavor"]
+    specific_cake.rating = request.json["rating"]
+    specific_cake.size = request.json["size"]
+    specific_cake.image = request.json["image"]
+    #not needed
+    db.session.add(specific_cake)
     db.session.commit()
     return jsonify(cake=specific_cake.to_dict())
 
-@app.route("/api/cupcakes/<int:id>", methods=["DELETE"])
+@app.route("/api/cupcake/<int:id>", methods=["DELETE"])
 def delete(id):
     cupcake = Cupcake.query.get_or_404(id)
     db.session.delete(cupcake)
